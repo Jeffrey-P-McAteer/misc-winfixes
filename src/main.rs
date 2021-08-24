@@ -87,7 +87,7 @@ fn run_bg(top_buffer: isize, ) {
   }
 
 
-  thread::sleep(time::Duration::from_millis(1250));
+  thread::sleep(time::Duration::from_millis(340));
 }
 
 
