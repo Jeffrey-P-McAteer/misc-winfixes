@@ -76,10 +76,10 @@ fn run_bg(top_buffer: isize, ) {
 
       unsafe {
         // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowpos
-        winapi::um::winuser::SetWindowPos(
+        SetWindowPos(
           w.hwnd, winapi::um::winuser::HWND_TOP,
           w.left as i32, top_buffer as i32, (w.right - w.left) as i32, (w.bot - top_buffer) as i32,
-          std::mem::zeroed(),
+          winapi::um::winuser::SWP_NOZORDER | winapi::um::winuser::SWP_NOOWNERZORDER | winapi::um::winuser::SWP_NOSENDCHANGING
         );
       }
 
@@ -163,6 +163,19 @@ unsafe extern "system" fn enumerate_windows(window: HWND, state: LPARAM) -> BOOL
     // Ignore windows smaller than 400px in at least one dimension
     if (w.right - w.left) < 400 || (w.bot - w.top) < 400 {
       return true.into();
+    }
+
+    // Ignore a list of titles
+    let ignored_windows = [
+      "",
+      "Program Manager",
+      "Microsoft Text Input Application",
+      "Microsoft Store",
+    ];
+    for ignored_title in ignored_windows.iter() {
+      if &&w.name == ignored_title {
+        return true.into();
+      }
     }
 
 
